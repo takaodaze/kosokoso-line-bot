@@ -1,5 +1,10 @@
-import { env } from "./env.ts";
 import { MessageEvent } from "./types.ts";
+import {
+  BON_DAIMONJI_GROUP_ID,
+  LINE_MESSAGING_API_END_POINT,
+} from "./constants.ts";
+
+import requestHeader from "./header.ts";
 
 export async function handleRequest(request: Request) {
   if (request.method !== "POST") {
@@ -35,11 +40,18 @@ export async function handleRequest(request: Request) {
       return new Response();
     }
 
+    const receivedMessage = messageEvent.events[0].message.text;
+    const replyToken = messageEvent.events[0].replyToken;
+
     if (json.events.length > 0) {
+      await pushMessage(
+        receivedMessage,
+        BON_DAIMONJI_GROUP_ID,
+      );
+
       await replyMessage(
-        messageEvent.events[0].message.text,
-        messageEvent.events[0].replyToken,
-        env.CHANNEL_ACCESS_TOKEN,
+        `"${receivedMessage}" をボン大文字グループに送信しました`,
+        replyToken,
       );
     }
 
@@ -47,27 +59,44 @@ export async function handleRequest(request: Request) {
   }
 }
 
+async function pushMessage(
+  message: string,
+  to: string,
+) {
+  const body = {
+    to: to,
+    messages: [
+      {
+        type: "text",
+        text: message,
+      },
+    ],
+  };
+
+  return fetch(LINE_MESSAGING_API_END_POINT.PUSH, {
+    method: "POST",
+    headers: requestHeader,
+    body: JSON.stringify(body),
+  });
+}
+
 async function replyMessage(
-  receivedMessageFromUser: string,
+  message: string,
   replyToken: string,
-  token: string,
 ) {
   const body = {
     replyToken,
     messages: [
       {
         type: "text",
-        text: receivedMessageFromUser,
+        text: message,
       },
     ],
   };
 
-  return fetch("https://api.line.me/v2/bot/message/reply", {
+  return fetch(LINE_MESSAGING_API_END_POINT.REPLY, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: requestHeader,
     body: JSON.stringify(body),
   });
 }
