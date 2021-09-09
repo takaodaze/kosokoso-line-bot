@@ -31,14 +31,8 @@ export async function handleRequest(request: Request) {
     const messageEvent = json as MessageEvent;
 
     if (messageEvent.events[0].source.type === "group") {
-      return new Response(
-        JSON.stringify({
-          message: "can not response event by group",
-        }),
-        {
-          status: 204,
-        },
-      );
+      console.log("Not responding to events from the group");
+      return new Response();
     }
 
     if (json.events.length > 0) {
