@@ -1,10 +1,6 @@
 import { MessageEvent } from "./types.ts";
-import {
-  BON_DAIMONJI_GROUP_ID,
-  LINE_MESSAGING_API_END_POINT,
-} from "./constants.ts";
-
-import requestHeader from "./header.ts";
+import { BON_DAIMONJI_GROUP_ID } from "./constants.ts";
+import { pushMessage, replyMessage } from "./messageTools.ts";
 
 export async function handleRequest(request: Request) {
   if (request.method !== "POST") {
@@ -74,46 +70,4 @@ export async function handleRequest(request: Request) {
   );
 
   return new Response();
-}
-
-async function pushMessage(
-  message: string,
-  to: string,
-) {
-  const body = {
-    to: to,
-    messages: [
-      {
-        type: "text",
-        text: message,
-      },
-    ],
-  };
-
-  return fetch(LINE_MESSAGING_API_END_POINT.PUSH, {
-    method: "POST",
-    headers: requestHeader,
-    body: JSON.stringify(body),
-  });
-}
-
-async function replyMessage(
-  message: string,
-  replyToken: string,
-) {
-  const body = {
-    replyToken,
-    messages: [
-      {
-        type: "text",
-        text: message,
-      },
-    ],
-  };
-
-  return fetch(LINE_MESSAGING_API_END_POINT.REPLY, {
-    method: "POST",
-    headers: requestHeader,
-    body: JSON.stringify(body),
-  });
 }
