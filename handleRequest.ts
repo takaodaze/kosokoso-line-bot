@@ -15,7 +15,6 @@ export async function handleRequest(request: Request) {
   }
 
   const contentType = request.headers.get("content-type");
-
   if (contentType == null) {
     return new Response(
       JSON.stringify({ error: "please provide 'content-type' header" }),
@@ -29,34 +28,52 @@ export async function handleRequest(request: Request) {
     );
   }
 
-  if (contentType.includes("application/json")) {
-    const json = await request.json();
-    console.log(json);
-
-    const messageEvent = json as MessageEvent;
-
-    if (messageEvent.events[0].source.type === "group") {
-      console.log("Not responding to events from the group");
-      return new Response();
-    }
-
-    const receivedMessage = messageEvent.events[0].message.text;
-    const replyToken = messageEvent.events[0].replyToken;
-
-    if (json.events.length > 0) {
-      await pushMessage(
-        receivedMessage,
-        BON_DAIMONJI_GROUP_ID,
-      );
-
-      await replyMessage(
-        `"${receivedMessage}" をボン大文字グループに送信しました`,
-        replyToken,
-      );
-    }
-
+  // json で送信されていなかった場合、処理を中断する
+  if (!contentType.includes("application/json")) {
     return new Response();
   }
+
+  // リクエストが正当であるため、処理を始める
+
+  const json = await request.json();
+  console.log(json);
+
+  const messageEvent = json as MessageEvent;
+
+  // log for debug
+  console.log(
+    "messageEvent.events[0].message.contentProvider",
+    messageEvent.events[0]?.message?.contentProvider,
+  );
+
+  if (messageEvent.events[0].source.type === "group") {
+    console.log("Not responding to events from the group");
+    return new Response();
+  }
+
+  const receivedMessage = messageEvent.events[0].message.text as string;
+  const messageType = messageEvent.events[0].message.type;
+  const replyToken = messageEvent.events[0].replyToken;
+
+  if (messageType !== "text") {
+    await replyMessage(
+      "現在、scandal はテキストのみの送信に対応しています",
+      replyToken,
+    );
+    return;
+  }
+
+  await pushMessage(
+    receivedMessage,
+    BON_DAIMONJI_GROUP_ID,
+  );
+
+  await replyMessage(
+    `"${receivedMessage}" をボン大文字グループに送信しました`,
+    replyToken,
+  );
+
+  return new Response();
 }
 
 async function pushMessage(
