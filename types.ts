@@ -16,6 +16,7 @@ type Event = {
   message: {
     id: string;
     type: string;
-    text: string;
+    text?: string;
+    contentProvider?: any;
   };
 };
