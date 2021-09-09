@@ -1,4 +1,5 @@
 import { env } from "./env.ts";
+import { MessageEvent } from "./types.ts";
 
 export async function handleRequest(request: Request) {
   if (request.method !== "POST") {
@@ -8,7 +9,9 @@ export async function handleRequest(request: Request) {
     });
   }
 
-  if (!request.headers.has("content-type")) {
+  const contentType = request.headers.get("content-type");
+
+  if (contentType == null) {
     return new Response(
       JSON.stringify({ error: "please provide 'content-type' header" }),
       {
@@ -21,23 +24,27 @@ export async function handleRequest(request: Request) {
     );
   }
 
-  const contentType = request.headers.get("content-type");
-
-  if (contentType == null) {
-    console.error("contentType is null!");
-    return new Response(null, {
-      status: 400,
-    });
-  }
-
   if (contentType.includes("application/json")) {
     const json = await request.json();
     console.log(json);
 
+    const messageEvent = json as MessageEvent;
+
+    if (messageEvent.events[0].source.type === "group") {
+      return new Response(
+        JSON.stringify({
+          message: "can not response event by group",
+        }),
+        {
+          status: 204,
+        },
+      );
+    }
+
     if (json.events.length > 0) {
       await replyMessage(
-        json.events[0]?.message?.text,
-        json.events[0]?.replyToken,
+        messageEvent.events[0].message.text,
+        messageEvent.events[0].replyToken,
         env.CHANNEL_ACCESS_TOKEN,
       );
     }
@@ -47,7 +54,7 @@ export async function handleRequest(request: Request) {
 }
 
 async function replyMessage(
-  message: string,
+  receivedMessageFromUser: string,
   replyToken: string,
   token: string,
 ) {
@@ -56,7 +63,7 @@ async function replyMessage(
     messages: [
       {
         type: "text",
-        text: message,
+        text: receivedMessageFromUser,
       },
     ],
   };
