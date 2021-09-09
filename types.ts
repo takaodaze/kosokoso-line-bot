@@ -17,6 +17,6 @@ type Event = {
     id: string;
     type: string;
     text?: string;
-    contentProvider?: any;
+    contentProvider?: unknown;
   };
 };
