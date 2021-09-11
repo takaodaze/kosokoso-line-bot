@@ -53,6 +53,8 @@ export async function getImageBinary(messageId: string) {
       headers: requestHeader,
     });
 
+    await res.body?.cancel();
+
     const imageBinary: number[] = [];
     if (res.body == null) {
       return;

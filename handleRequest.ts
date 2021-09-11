@@ -37,7 +37,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   const messageEvent = json as MessageEvent;
 
   // log for debug
-  // await getImageBinary(messageEvent.events[0].message.id);
+  await getImageBinary(messageEvent.events[0].message.id);
 
   if (messageEvent.events[0]?.source?.type === "group") {
     console.log("Not responding to events from the group");
