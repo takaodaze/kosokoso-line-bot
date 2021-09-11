@@ -54,16 +54,18 @@ export async function getImageBinary(messageId: string) {
     });
     if (res.body == null) return;
 
-    const imageBinary: number[] = [];
+    let base64ImageBinary = "";
     const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf8");
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
       if (value != null) {
-        imageBinary.push(...value);
+        const b64encoded = btoa(decoder.decode(value));
+        base64ImageBinary = base64ImageBinary + b64encoded;
       }
     }
-    console.log("debug:imageBinary:", imageBinary);
+    console.log("debug:imageBinary:", base64ImageBinary);
   } catch (err) {
     console.error("ocurred error! getImegeBinary func running:", err);
   }
