@@ -1,5 +1,5 @@
 import { handleRequest } from "./handleRequest.ts";
 
-addEventListener("fetch", async (event) => {
-  await event.respondWith(await handleRequest(event.request));
+addEventListener("fetch", (event) => {
+  event.respondWith(handleRequest(event.request));
 });
