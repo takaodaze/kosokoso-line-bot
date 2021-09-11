@@ -47,7 +47,18 @@ export async function getImageBinary(messageId: string) {
   const endpoint =
     `https://api-data.line.me/v2/bot/message/${messageId}/content`;
   const res = await fetch(endpoint, { method: "GET", headers: requestHeader });
-  const reader = res.body?.getReader();
-  console.log(await reader?.read());
-  console.log("debug", res);
+  const imageBinary: any[] = [];
+  if (res.body == null) {
+    return;
+  }
+  const reader = res.body.getReader();
+  while (true) {
+    const { value, done } = await reader.read();
+    value?.forEach((binary) => imageBinary.push(binary));
+    if (done) {
+      break;
+    }
+  }
+  console.log("debug:res:", res);
+  console.log("debug:imageBinary:", imageBinary);
 }
