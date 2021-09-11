@@ -44,23 +44,30 @@ export async function replyMessage(
 }
 
 export async function getImageBinary(messageId: string) {
-  const endpoint =
-    `https://api-data.line.me/v2/bot/message/${messageId}/content`;
-  const res = await fetch(endpoint, { method: "GET", headers: requestHeader });
-  const imageBinary: number[] = [];
-  if (res.body == null) {
-    return;
-  }
-  const reader = res.body.getReader();
-  console.log("debug,buffer:", await res.arrayBuffer());
-  while (true) {
-    const { value, done } = await reader.read();
-    value?.forEach((binary) => imageBinary.push(binary));
-    if (done) {
-      await reader.cancel();
-      break;
+  try {
+    const endpoint =
+      `https://api-data.line.me/v2/bot/message/${messageId}/content`;
+    const res = await fetch(endpoint, {
+      method: "GET",
+      headers: requestHeader,
+    });
+    const imageBinary: number[] = [];
+    if (res.body == null) {
+      return;
     }
+    const reader = res.body.getReader();
+    console.log("debug,buffer:", await res.arrayBuffer());
+    while (true) {
+      const { value, done } = await reader.read();
+      value?.forEach((binary) => imageBinary.push(binary));
+      if (done) {
+        await reader.cancel();
+        break;
+      }
+    }
+    console.log("debug:res:", res);
+    console.log("debug:imageBinary:", imageBinary);
+  } catch (err) {
+    console.error("ocurred error! getImegeBinary func running:", err);
   }
-  console.log("debug:res:", res);
-  console.log("debug:imageBinary:", imageBinary);
 }
