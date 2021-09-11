@@ -52,23 +52,18 @@ export async function getImageBinary(messageId: string) {
       method: "GET",
       headers: requestHeader,
     });
-    const blob = await res.blob();
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      const base64data = reader.result;
-      console.log(base64data);
-    };
     if (res.body == null) return;
 
-    // const imageBinary: number[] = [];
-    // const reader = res.body.getReader();
-    // while (true) {
-    //   const { value, done } = await reader.read();
-    //   if (done) break;
-    //   value?.forEach((binary) => imageBinary.push(binary));
-    // }
-    // console.log("debug:imageBinary:", imageBinary);
+    const imageBinary: Uint8Array[] = [];
+    const reader = res.body.getReader();
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (value != null) {
+        imageBinary.push(value);
+      }
+    }
+    console.log("debug:imageBinary:", imageBinary);
   } catch (err) {
     console.error("ocurred error! getImegeBinary func running:", err);
   }
