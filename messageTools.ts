@@ -42,3 +42,10 @@ export async function replyMessage(
     body: JSON.stringify(body),
   });
 }
+
+export async function getImageBinary(messageId: string) {
+  const endpoint =
+    `https://api-data.line.me/v2/bot/message/${messageId}/content`;
+  const res = await fetch(endpoint, { method: "GET", headers: requestHeader });
+  console.log("debug", res);
+}

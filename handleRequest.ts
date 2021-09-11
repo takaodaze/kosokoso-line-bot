@@ -1,6 +1,6 @@
 import { MessageEvent } from "./types.ts";
 import { BON_DAIMONJI_GROUP_ID } from "./constants.ts";
-import { pushMessage, replyMessage } from "./messageTools.ts";
+import { getImageBinary, pushMessage, replyMessage } from "./messageTools.ts";
 
 export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {
@@ -37,10 +37,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   const messageEvent = json as MessageEvent;
 
   // log for debug
-  console.log(
-    "messageEvent.events[0].message.contentProvider",
-    messageEvent.events[0]?.message?.contentProvider,
-  );
+  await getImageBinary(messageEvent.events[0].message.id);
 
   if (messageEvent.events[0]?.source?.type === "group") {
     console.log("Not responding to events from the group");
