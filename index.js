@@ -1,6 +1,5 @@
 import { handleRequest } from "./handleRequest.ts";
 
-// deno-lint-ignore no-explicit-any
-addEventListener("fetch", async (event: any) => {
+addEventListener("fetch", async (event) => {
   await event.respondWith(await handleRequest(event.request));
 });
