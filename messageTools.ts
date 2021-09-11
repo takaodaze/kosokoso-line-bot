@@ -54,13 +54,13 @@ export async function getImageBinary(messageId: string) {
     });
     if (res.body == null) return;
 
-    const imageBinary: Uint8Array[] = [];
+    const imageBinary: number[] = [];
     const reader = res.body.getReader();
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
       if (value != null) {
-        imageBinary.push(value);
+        imageBinary.push(...value);
       }
     }
     console.log("debug:imageBinary:", imageBinary);
