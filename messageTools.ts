@@ -52,6 +52,7 @@ export async function getImageBinary(messageId: string) {
       method: "GET",
       headers: requestHeader,
     });
+    console.log(await res.blob());
 
     if (res.body == null) return;
 
@@ -64,8 +65,6 @@ export async function getImageBinary(messageId: string) {
     }
     console.log("debug:res:", res);
     console.log("debug:imageBinary:", imageBinary);
-
-    await res.body.cancel();
   } catch (err) {
     console.error("ocurred error! getImegeBinary func running:", err);
   }
