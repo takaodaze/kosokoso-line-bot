@@ -56,12 +56,11 @@ export async function getImageBinary(messageId: string) {
 
     let base64ImageBinary = "";
     const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf8");
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
       if (value != null) {
-        const b64encoded = btoa(decoder.decode(value));
+        const b64encoded = btoa(String.fromCharCode(...value));
         base64ImageBinary = base64ImageBinary + b64encoded;
       }
     }
