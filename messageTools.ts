@@ -56,9 +56,9 @@ export async function getImageBinary(messageId: string) {
     const { value, done } = await reader.read();
     value?.forEach((binary) => imageBinary.push(binary));
     if (done) {
-      break;
+      // break;
     }
   }
-  // console.log("debug:res:", res);
-  // console.log("debug:imageBinary:", imageBinary);
+  console.log("debug:res:", res);
+  console.log("debug:imageBinary:", imageBinary);
 }
