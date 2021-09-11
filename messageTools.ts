@@ -42,30 +42,3 @@ export async function replyMessage(
     body: JSON.stringify(body),
   });
 }
-
-export async function getImageBinary(messageId: string) {
-  try {
-    const endpoint =
-      `https://api-data.line.me/v2/bot/message/${messageId}/content`;
-
-    const res = await fetch(endpoint, {
-      method: "GET",
-      headers: requestHeader,
-    });
-    if (res.body == null) return;
-
-    let base64ImageBinary = "";
-    const reader = res.body.getReader();
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      if (value != null) {
-        const b64encoded = btoa(String.fromCharCode(...value));
-        base64ImageBinary = base64ImageBinary + b64encoded;
-      }
-    }
-    console.log("debug:imageBinary:", base64ImageBinary);
-  } catch (err) {
-    console.error("ocurred error! getImegeBinary func running:", err);
-  }
-}

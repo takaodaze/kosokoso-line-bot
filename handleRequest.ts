@@ -1,6 +1,6 @@
 import { MessageEvent } from "./types.ts";
 import { BON_DAIMONJI_GROUP_ID } from "./constants.ts";
-import { getImageBinary, pushMessage, replyMessage } from "./messageTools.ts";
+import { pushMessage, replyMessage } from "./messageTools.ts";
 
 export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {
@@ -44,10 +44,6 @@ export async function handleRequest(request: Request): Promise<Response> {
   const receivedMessage = messageEvent.events[0]?.message?.text as string;
   const messageType = messageEvent.events[0]?.message?.type;
   const replyToken = messageEvent?.events[0]?.replyToken;
-
-  if (messageType === "image") {
-    await getImageBinary(messageEvent.events[0].message.id);
-  }
 
   if (messageType !== "text") {
     await replyMessage(
