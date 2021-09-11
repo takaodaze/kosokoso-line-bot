@@ -47,5 +47,7 @@ export async function getImageBinary(messageId: string) {
   const endpoint =
     `https://api-data.line.me/v2/bot/message/${messageId}/content`;
   const res = await fetch(endpoint, { method: "GET", headers: requestHeader });
+  const reader = res.body?.getReader();
+  console.log(reader);
   console.log("debug", res);
 }

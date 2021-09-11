@@ -50,7 +50,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
   if (messageType !== "text") {
     await replyMessage(
-      "現在、scandal はテキストのみの送信に対応しています",
+      "現在、kosokoso はテキストのみの送信に対応しています",
       replyToken,
     );
     return new Response();
