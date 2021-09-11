@@ -2,7 +2,7 @@ import { MessageEvent } from "./types.ts";
 import { BON_DAIMONJI_GROUP_ID } from "./constants.ts";
 import { pushMessage, replyMessage } from "./messageTools.ts";
 
-export async function handleRequest(request: Request) {
+export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return new Response(null, {
       status: 405,
@@ -56,7 +56,7 @@ export async function handleRequest(request: Request) {
       "現在、scandal はテキストのみの送信に対応しています",
       replyToken,
     );
-    return;
+    return new Response();
   }
 
   await pushMessage(
