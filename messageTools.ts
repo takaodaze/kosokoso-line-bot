@@ -55,8 +55,6 @@ export async function getImageBinary(messageId: string) {
 
     if (res.body == null) return;
 
-    await res.body?.cancel();
-
     const imageBinary: number[] = [];
     const reader = res.body.getReader();
     while (true) {
@@ -66,6 +64,8 @@ export async function getImageBinary(messageId: string) {
     }
     console.log("debug:res:", res);
     console.log("debug:imageBinary:", imageBinary);
+
+    await res.body.cancel();
   } catch (err) {
     console.error("ocurred error! getImegeBinary func running:", err);
   }
