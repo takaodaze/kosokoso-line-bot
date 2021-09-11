@@ -32,7 +32,7 @@ export async function handleRequest(request: Request) {
   // リクエストが正当であるため、処理を始める
 
   const json = await request.json();
-  console.log(json);
+  console.log(`${Date().toString()}\nrequest:`, json);
 
   const messageEvent = json as MessageEvent;
 
@@ -42,14 +42,14 @@ export async function handleRequest(request: Request) {
     messageEvent.events[0]?.message?.contentProvider,
   );
 
-  if (messageEvent.events[0].source.type === "group") {
+  if (messageEvent.events[0]?.source?.type === "group") {
     console.log("Not responding to events from the group");
     return new Response();
   }
 
-  const receivedMessage = messageEvent.events[0].message.text as string;
-  const messageType = messageEvent.events[0].message.type;
-  const replyToken = messageEvent.events[0].replyToken;
+  const receivedMessage = messageEvent.events[0]?.message?.text as string;
+  const messageType = messageEvent.events[0]?.message?.type;
+  const replyToken = messageEvent?.events[0]?.replyToken;
 
   if (messageType !== "text") {
     await replyMessage(
